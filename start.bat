@@ -1,5 +1,9 @@
 @echo off
 chcp 65001 >nul
+
+REM 始终在本脚本所在目录执行，避免从其他工作目录（如管理员模式、快捷方式）启动时找不到文件
+cd /d "%~dp0"
+
 echo ╔═══════════════════════════════════════════════════════════╗
 echo ║          OCS智能答题API - 快速启动脚本 (Windows)        ║
 echo ╚═══════════════════════════════════════════════════════════╝
@@ -46,10 +50,21 @@ REM 检查.env文件
 if not exist ".env" (
     echo.
     echo ⚠️  未找到.env配置文件
-    echo 📝 正在创建.env文件，请编辑后重新运行
-    copy .env.example .env >nul 2>&1
+    if not exist "env.template" (
+        echo ❌ 未找到 env.template，无法自动创建 .env
+        pause
+        exit /b 1
+    )
+    echo 📝 正在从 env.template 创建.env文件...
+    copy "env.template" ".env" >nul
+    if not exist ".env" (
+        echo ❌ 创建.env失败，请手动复制 env.template 为 .env
+        pause
+        exit /b 1
+    )
+    echo ✅ .env 已创建
     echo.
-    echo 请编辑.env文件，填入您的DeepSeek API密钥
+    echo 请编辑.env文件，按需修改端口、代理等参数，然后重新运行本脚本
     echo 文件位置: %cd%\.env
     echo.
     notepad .env
