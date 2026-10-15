@@ -1,0 +1,7 @@
+# Windows 批处理必须使用 CRLF 行尾。
+# cmd.exe 解析 LF-only 的 .bat 时，遇到多字节中文会吃掉字符导致
+# "xxx is not recognized as an internal or external command" 之类的乱码，
+# 而 GitHub 的 "Download ZIP" 不会套用客户端的 core.autocrlf 设置，
+# 所以必须在这里显式声明，保证任何方式获取的仓库都拿到 CRLF。
+*.bat text eol=crlf
+*.cmd text eol=crlf
